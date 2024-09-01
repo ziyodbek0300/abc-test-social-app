@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  full_name    String
+  password     String
+  is_verified  Boolean       @default(false)
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  publications Publication[]
+  likes        Like[]
+  Comment      Comment[]
+}
+
+model Publication {
+  id         String    @id @default(uuid())
+  title      String
+  content    String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  author     User      @relation(fields: [authorId], references: [id])
+  authorId   String
+  likes      Like[]
+  comments   Comment[]
+}
+
+model Comment {
+  id            String      @id @default(uuid())
+  content       String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  publication   Publication @relation(fields: [publicationId], references: [id])
+  publicationId String
+  author        User        @relation(fields: [authorId], references: [id])
+  authorId      String
+}
+
+model Like {
+  id            String      @id @default(uuid())
+  publicationId String
+  userId        String
+  createdAt     DateTime    @default(now())
+  publication   Publication @relation(fields: [publicationId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+
+  @@unique([publicationId, userId])
+}
