@@ -46,7 +46,7 @@ jobs:
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
 
       - name: Add SSH passphrase
-        run: echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add -
+        run: echo "${{ secrets.SSH_PASSPHRASE }}" | ssh-add
 
       - name: Build and push Docker image
         run: |
