@@ -1,5 +1,4 @@
-import { Prisma, PrismaClient, Publication } from '@prisma/client';
-import prisma from '../prisma/client';
+import { PrismaClient, Publication } from '@prisma/client';  // Import the relevant Prisma types
 import { PaginationService } from './pagination.service';
 
 export class PublicationService {
@@ -31,7 +30,7 @@ export class PublicationService {
 
         const totalPages = Math.ceil(totalItems / pageSize);
 
-        const result = publications.reduce((acc: any, publication) => {
+        const result = publications.reduce((acc: { username: string; articles }[], publication) => {
             const authorName = publication.author.full_name;
             const likeIds = publication.likes.map((like) => like.userId);
 
@@ -66,8 +65,8 @@ export class PublicationService {
         };
     }
 
-    async createPublication(userId: string, title: string, content: string) {
-        return await prisma.publication.create({
+    async createPublication(userId: string, title: string, content: string): Promise<Publication> {
+        return await this.prisma.publication.create({
             data: {
                 title,
                 content,
@@ -76,8 +75,8 @@ export class PublicationService {
         });
     }
 
-    async getPublications() {
-        const publications = await prisma.publication.findMany({
+    async getPublications(): Promise<{ username: string; articles: { uuid: string; Title: string; Content: string; Likes: string[] }[] }[]> {
+        const publications = await this.prisma.publication.findMany({
             include: {
                 author: true,
                 likes: {
@@ -88,7 +87,7 @@ export class PublicationService {
             },
         });
 
-        const result = publications.reduce((acc: any, publication) => {
+        const result = publications.reduce((acc: { username: string; articles }[], publication) => {
             const author = publication.author.full_name;
             const likeIds = publication.likes.map((like) => like.userId);
 
@@ -99,7 +98,7 @@ export class PublicationService {
                 Likes: likeIds,
             };
 
-            const authorEntry = acc.find((entry: any) => entry.username === author);
+            const authorEntry = acc.find((entry) => entry.username === author);
             if (authorEntry) {
                 authorEntry.articles.push(article);
             } else {
@@ -115,8 +114,8 @@ export class PublicationService {
         return result;
     }
 
-    async getPublicationById(id: string) {
-        return await prisma.publication.findUnique({
+    async getPublicationById(id: string): Promise<Publication | null> {
+        return await this.prisma.publication.findUnique({
             where: { id },
             include: {
                 author: true,
@@ -126,8 +125,8 @@ export class PublicationService {
         });
     }
 
-    async updatePublication(id: string, userId: string, title?: string, content?: string) {
-        const publication = await prisma.publication.findUnique({
+    async updatePublication(id: string, userId: string, title?: string, content?: string): Promise<Publication> {
+        const publication = await this.prisma.publication.findUnique({
             where: { id },
         });
 
@@ -135,7 +134,7 @@ export class PublicationService {
             throw new Error('Unauthorized');
         }
 
-        return await prisma.publication.update({
+        return await this.prisma.publication.update({
             where: { id },
             data: {
                 title,
@@ -144,8 +143,8 @@ export class PublicationService {
         });
     }
 
-    async deletePublication(id: string, userId: string) {
-        const publication = await prisma.publication.findUnique({
+    async deletePublication(id: string, userId: string): Promise<void> {
+        const publication = await this.prisma.publication.findUnique({
             where: { id },
         });
 
@@ -153,7 +152,7 @@ export class PublicationService {
             throw new Error('Unauthorized');
         }
 
-        await prisma.publication.delete({
+        await this.prisma.publication.delete({
             where: { id },
         });
     }

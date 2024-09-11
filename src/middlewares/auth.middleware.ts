@@ -16,7 +16,7 @@ export const authenticateUser: RequestHandler = (req: Request, res: Response, ne
         (req as AuthenticatedRequest).user = { userId: decoded.userId };
 
         next();
-    } catch (error) {
+    } catch {
         return res.status(401).json({ message: 'Invalid token' });
     }
 };

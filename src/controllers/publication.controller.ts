@@ -11,7 +11,7 @@ export const createPublication = async (req: Request, res: Response) => {
     try {
         const publication = await publicationService.createPublication(userId, title, content);
         res.status(201).json(publication);
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Failed to create publication' });
     }
 };
@@ -34,7 +34,7 @@ export const getPublications = async (req: AuthenticatedRequest, res: Response) 
     try {
         const result = await publicationService.getPublications();
         res.status(200).json(result);
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Failed to retrieve publications' });
     }
 };
@@ -50,7 +50,7 @@ export const getPublicationById = async (req: Request, res: Response) => {
         }
 
         res.status(200).json(publication);
-    } catch (error) {
+    } catch {
         res.status(500).json({ message: 'Failed to retrieve publication' });
     }
 };
@@ -63,8 +63,8 @@ export const updatePublication = async (req: Request, res: Response) => {
     try {
         const updatedPublication = await publicationService.updatePublication(id, userId, title, content);
         res.status(200).json(updatedPublication);
-    } catch (error: any) {
-        if (error.message === 'Unauthorized') {
+    } catch (error: unknown) {
+        if (error instanceof Error && error.message === 'Unauthorized') {
             res.status(403).json({ message: 'Unauthorized' });
         } else {
             res.status(500).json({ message: 'Failed to update publication' });
@@ -79,8 +79,8 @@ export const deletePublication = async (req: Request, res: Response) => {
     try {
         await publicationService.deletePublication(id, userId);
         res.status(200).json({ message: 'Publication deleted successfully' });
-    } catch (error: any) {
-        if (error.message === 'Unauthorized') {
+    } catch (error: unknown) {
+        if (error instanceof Error && error.message === 'Unauthorized') {
             res.status(403).json({ message: 'Unauthorized' });
         } else {
             res.status(500).json({ message: 'Failed to delete publication' });

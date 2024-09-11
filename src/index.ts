@@ -15,7 +15,7 @@ import {
 } from './routes';
 
 export const app = express();
-const prisma = new PrismaClient();
+new PrismaClient();
 
 app.use(express.json());
 app.use(helmet());

@@ -5,7 +5,7 @@ export class PaginationService {
 
     async paginate<T>(
         model: Prisma.ModelName,
-        args: any,
+        args,
         page: number = 1,
         pageSize: number = 10
     ): Promise<{ data: T[]; total: number; page: number; pageSize: number }> {

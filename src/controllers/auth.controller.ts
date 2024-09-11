@@ -15,10 +15,11 @@ export const register = async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await userService.register(registerDto.email, registerDto.full_name, registerDto.password);
+        await userService.register(registerDto.email, registerDto.full_name, registerDto.password);
         res.status(201).json({ message: 'User registered. Please check your email to verify your account.' });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        if (error instanceof Error)
+            res.status(400).json({ message: error.message });
     }
 };
 
@@ -35,8 +36,9 @@ export const login = async (req: Request, res: Response) => {
     try {
         const token = await userService.authenticate(loginDto.email, loginDto.password);
         res.status(200).json({ token });
-    } catch (error: any) {
-        res.status(400).json({ message: error.message });
+    } catch (error: unknown) {
+        if (error instanceof Error)
+            res.status(400).json({ message: error.message });
     }
 };
 
@@ -47,7 +49,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
     try {
         await userService.verifyEmail(token as string);
         res.status(200).json({ message: 'Email verified successfully' });
-    } catch (error) {
+    } catch {
         res.status(400).json({ message: 'Invalid or expired token' });
     }
 };

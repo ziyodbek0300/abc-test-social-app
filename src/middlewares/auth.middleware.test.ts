@@ -1,9 +1,7 @@
 import request from 'supertest';
 import { app } from '../index';
-import { config } from '../config';
 
 describe('Authorization Middleware', () => {
-    const secret = config.secret;
     const invalidToken = 'invalid.token.here';
 
     it('should return 401 if no token is provided', async () => {

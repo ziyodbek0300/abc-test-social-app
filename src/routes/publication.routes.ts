@@ -1,7 +1,6 @@
 import express from 'express';
 import {
     createPublication,
-    getPublications,
     getPublicationById,
     updatePublication,
     deletePublication,
