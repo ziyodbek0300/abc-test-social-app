@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import prisma from '../../prisma/client';
 
-cron.schedule('0 0 * * *', async () => {
+const cronTask = cron.schedule('0 0 * * *', async () => {
     const now = new Date();
     const thresholdDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -20,3 +20,5 @@ cron.schedule('0 0 * * *', async () => {
         console.error('Error during cleanup:', error);
     }
 });
+
+export default cronTask

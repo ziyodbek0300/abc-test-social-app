@@ -3,9 +3,6 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { PrismaClient } from '@prisma/client';
 
-// cron-imports
-import "./services/crons/cleanup.service"
-
 import {
     AuthRoutes,
     CommentRoutes,
@@ -13,6 +10,8 @@ import {
     PublicationRoutes,
     UserReoutes
 } from './routes';
+
+import cronTask from './services/crons/cleanup.service';
 
 export const app = express();
 new PrismaClient();
@@ -33,6 +32,10 @@ app.use('/api', UserReoutes);
 app.get('/', (req, res) => {
     res.send('Mini Social Network API');
 });
+
+afterAll(() => {
+    cronTask.stop();
+})
 
 if (require.main === module) {
     app.listen(3000, () => {
