@@ -27,7 +27,7 @@ jobs:
       - name: Lint and Test
         run: |
           npm run lint
-          npm test
+          npm run test -- --detectOpenHandles
 
   deploy:
     runs-on: ubuntu-latest
